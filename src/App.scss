@@ -1,0 +1,22 @@
+img{
+  max-width: 100%;
+}
+
+body{
+  color: #ffffff !important;
+  line-height: 1.5 !important;
+  overflow-x: hidden;
+}
+
+.backgroundWrapper{
+  background: linear-gradient(57deg,#1c1235 20%,#000 78%);
+  min-height: 100vh;
+  min-width: 100%;
+}
+a{
+  display: inline-block;
+  color: #ffffff;
+  &:hover{
+      color: #ff5023;
+  }
+}

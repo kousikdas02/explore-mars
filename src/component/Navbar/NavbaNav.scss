@@ -1,0 +1,14 @@
+.logoIcon{
+    display: inline-block;
+    width: 30px;
+    
+}
+
+.navbar{
+    a{
+        color: #ffffff;
+        &:hover{
+            color: #ff5023;
+        }
+    }
+}

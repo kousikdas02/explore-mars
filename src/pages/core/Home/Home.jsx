@@ -6,26 +6,11 @@ import moment from "moment";
 import axios from "axios";
 
 const Home = () => {
-    /* `const formatDate = moment().format("DD-MM-YYYY");` is creating a variable `formatDate` that
-    contains the current date formatted as a string in the format "DD-MM-YYYY". The `moment()`
-    function is a part of the Moment.js library and returns the current date and time. The
-    `format()` method is then used to format the date as a string in the desired format. This
-    formatted date is later used in the component to display the current date in the UI. */
     const formatDate = moment().format("DD-MM-YYYY");
 
-    /** "selected" here is state variable which will hold the
-     * value of currently selected dropdown.
-     */
     const [selected, setSelected] = React.useState("");
 
-    /** Function that will set different values to state variable
-     * based on which dropdown is selected
-     */
-    // const changeSelectOptionHandler = (event) => {
-    //     setSelected(event.target.value);
-    // };
 
-    /** Different arrays for different dropdowns */
     const Curiosity = [
         "FHAZ",
         "NAVCAM",
@@ -40,10 +25,7 @@ const Home = () => {
     const Perseverance = ["EDL_RUCAM", "EDL_DDCAM", "EDL_PUCAM1", "EDL_PUCAM2", "NAVCAM_LEFT", "NAVCAM_RIGHT", "MCZ_RIGHT", "MCZ_LEFT", "FRONT_HAZCAM_LEFT_A", "FRONT_HAZCAM_RIGHT_A", "REAR_HAZCAM_LEFT", "REAR_HAZCAM_RIGHT", "EDL_RDCAM", "SKYCAM", "SHERLOC_WATSON", "SUPERCAM_RMI", "LCAM"];
     
 
-    /** Type variable to store different array for different dropdown */
     let type = null;
-
-    /** This will be used to create set of options that user will see */
     let options = null;
 
     /** Setting Type variable according to dropdown */
@@ -57,36 +39,35 @@ const Home = () => {
         type = Perseverance;
     }
 
-    /** If "Type" is null or undefined then options will be null,
-     * otherwise it will create a options iterable based on our array
-     */
     if (type) {
         options = type.map((el) => <option key={el}>{el}</option>);
     }
 
-    const [status, setStatus] = useState(null);
+    const [roverName, setRoverName] = useState(null);
     function changeStatus(e) {
-        setStatus(e.target.value);
+        setRoverName(e.target.value);
         setSelected(e.target.value);
-
       }
-      
 
+    const [cameraName, setCameraName] = useState(null)
+    function changeCamera(e){
+        setCameraName(e.target.value);
+    }
 
-    // const [roverData, setRoverData] = useState([])
+    const [roverData, setRoverData] = useState([])
 
-    // const getEachRoverData = async() =>{
-    //     const BaseUrl = "https://mars-photos.herokuapp.com/explore/";
-    //     const response = await axios.get(`${BaseUrl}/${roverName}`)
-    //     setRoverData(response?.data)
-    // };
+    const getEachRoverData = async() =>{
+        const BaseUrl = "https://mars-photos.herokuapp.com/api/v1/rovers/";
+        const response = await axios.get(`${BaseUrl}/${roverName}/latest_photos&?camera=${cameraName}`)
+        setRoverData(response?.data)
+    };
 
-    // useEffect(() => {
-    //     getEachRoverData()  
-    // }, [])
+    useEffect(() => {
+        getEachRoverData()  
+    }, [])
 
     
-    console.log(status);
+    console.log(roverData);
 
     return (
         <>
@@ -117,7 +98,7 @@ const Home = () => {
             <div className='picturesTakenToday'>
                 <Container>
                     <div className='picturesTakenToday_inner'>
-                        <h2>Pictues Taken Today ({formatDate})</h2>
+                        <h2>Recent Pictures Taken By Rover: <span>{roverName}</span> and Camera: <span>{cameraName}</span></h2>
 
                         <div className='rover_camera_chose'>
                             <div className='selectRover'>
@@ -136,7 +117,7 @@ const Home = () => {
                                 ) : (
                                     <>
                                         <h3>Chose Camera :</h3>
-                                        <select>
+                                        <select onChange={changeCamera}>
                                             {
                                                 /** This is where we have used our options variable */
                                                 options

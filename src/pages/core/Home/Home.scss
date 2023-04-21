@@ -39,10 +39,96 @@
     }
 }
 
-.picturesTakenToday_inner{
+.recentPics{
     h2{
+        margin-bottom: 25px;
         span{
             color: #ff5023;
         }
+    }
+
+    .roverSelect{
+        max-width: 500px;
+        color: #000;
+        margin-bottom: 30px;
+        
+        
+    }
+}
+
+.recentPics{
+    h3{
+        margin-bottom: 30px;
+        span{
+            text-transform: capitalize;
+        }
+    }
+}
+
+.RoverModal{
+    // color: #000;
+    h2 {
+        font-size: 20px;
+        font-weight: 400;
+        span{
+            font-weight: 800;
+            color: #fff;
+        }
+    }
+
+    .modalImage{
+        figure{
+            img{
+                width: 100%;
+                height: 300px;
+                object-fit: cover;
+            }
+        }
+    }
+
+    .modal-content{
+        background-color: #34224b;
+    }
+    .btn-close{
+        color: #fff;
+        filter: brightness(100%) invert(1);
+    }
+}
+
+.modal_link{
+    width: 100%;
+    height: 100%;
+    border-radius: 10px;
+    overflow: hidden;
+    padding: 0;
+    border: 0;
+    span{
+        display: inline-block;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        img{
+            transition: all ease 0.4s;
+            height: 100%;
+            object-fit: cover;
+            width: 100%;
+        }
+    }
+    &:hover{
+        span{
+            img{
+                transform: scale(1.1);
+            }
+        }
+    }
+
+}
+
+
+.recentPhotos_row{
+    margin-bottom: -15px;
+
+    > *{
+        margin-bottom: 15px;
     }
 }

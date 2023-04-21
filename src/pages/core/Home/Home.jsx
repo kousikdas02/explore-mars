@@ -1,73 +1,64 @@
-import { Col, Container, Row } from "react-bootstrap";
+import { Button, Col, Container, Modal, Row } from "react-bootstrap";
 import "./Home.scss";
 import React, { useEffect, useState } from "react";
 import marsGif from "../../../assets/images/mars.png";
-import moment from "moment";
+// import moment from "moment";
 import axios from "axios";
+import Select from 'react-select'
+
 
 const Home = () => {
-    const formatDate = moment().format("DD-MM-YYYY");
-
-    const [selected, setSelected] = React.useState("");
+    // const formatDate = moment().format("DD-MM-YYYY");
 
 
-    const Curiosity = [
-        "FHAZ",
-        "NAVCAM",
-        "MAST",
-        "CHEMCAM",
-        "MAHLI",
-        "MARDI",
-        "RHAZ",
-    ];
-    const Spirit = ["FHAZ", "NAVCAM", "PANCAM", "MINITES", "ENTRY", "RHAZ"];
-    const Opportunity = ["FHAZ", "NAVCAM", "PANCAM", "MINITES", "ENTRY", "RHAZ"];
-    const Perseverance = ["EDL_RUCAM", "EDL_DDCAM", "EDL_PUCAM1", "EDL_PUCAM2", "NAVCAM_LEFT", "NAVCAM_RIGHT", "MCZ_RIGHT", "MCZ_LEFT", "FRONT_HAZCAM_LEFT_A", "FRONT_HAZCAM_RIGHT_A", "REAR_HAZCAM_LEFT", "REAR_HAZCAM_RIGHT", "EDL_RDCAM", "SKYCAM", "SHERLOC_WATSON", "SUPERCAM_RMI", "LCAM"];
+    const [isClearable, setIsClearable] = useState(true);
+    const options = [
+        { value: 'curiosity', label: 'Curiosity' },
+        { value: 'spirit', label: 'Spirit' },
+        { value: 'opportunity', label: 'Opportunity' },
+        { value: 'perseverance', label: 'Perseverance' }
+      ]
+
     
+    const [roverName, setRoverName] = useState("")
+    const handleTypeSelect = (e) => {
+        setRoverName(e.value);
+      };
 
-    let type = null;
-    let options = null;
-
-    /** Setting Type variable according to dropdown */
-    if (selected === "Curiosity") {
-        type = Curiosity;
-    } else if (selected === "Spirit") {
-        type = Spirit;
-    } else if (selected === "Opportunity") {
-        type = Opportunity;
-    } else if (selected === "Perseverance") {
-        type = Perseverance;
-    }
-
-    if (type) {
-        options = type.map((el) => <option key={el}>{el}</option>);
-    }
-
-    const [roverName, setRoverName] = useState(null);
-    function changeStatus(e) {
-        setRoverName(e.target.value);
-        setSelected(e.target.value);
-      }
-
-    const [cameraName, setCameraName] = useState(null)
-    function changeCamera(e){
-        setCameraName(e.target.value);
-    }
-
+    
     const [roverData, setRoverData] = useState([])
 
-    const getEachRoverData = async() =>{
-        const BaseUrl = "https://mars-photos.herokuapp.com/api/v1/rovers/";
-        const response = await axios.get(`${BaseUrl}/${roverName}/latest_photos&?camera=${cameraName}`)
-        setRoverData(response?.data)
+    const getEachRoverData = async(e) =>{
+        try {
+            const BaseUrl = "https://mars-photos.herokuapp.com/api/v1/rovers";
+            const response = await axios.get(`${BaseUrl}/${roverName}/latest_photos`)
+            setRoverData(response?.data.latest_photos)
+        } catch (error) {
+            console.log("error", error);
+        }
+        
     };
 
     useEffect(() => {
         getEachRoverData()  
-    }, [])
+    }, [roverName])
 
     
-    console.log(roverData);
+    // console.log(roverData);
+    // console.log(roverName);
+
+    // modal
+    const [modalIsOpen, setModalIsOpen] = useState(false);
+   const [modalData, setModalData] = useState(null);
+   console.log(modalData);
+
+
+    //    load more
+    // const imagePerRow = 3;
+    // const [loadMoreImg, setloadMoreImg] = useState(imagePerRow);
+    // const handleMoreImage = () => {
+    //     setloadMoreImg(loadMoreImg + imagePerRow);
+    // };
 
     return (
         <>
@@ -95,43 +86,72 @@ const Home = () => {
                     </div>
                 </Container>
             </div>
-            <div className='picturesTakenToday'>
+
+            <div className="recentPics common_gap">
                 <Container>
-                    <div className='picturesTakenToday_inner'>
-                        <h2>Recent Pictures Taken By Rover: <span>{roverName}</span> and Camera: <span>{cameraName}</span></h2>
-
-                        <div className='rover_camera_chose'>
-                            <div className='selectRover'>
-                                <h3>Select Rover :</h3>
-                                <select onChange={changeStatus} >
-                                    <option>Choose Rover...</option>
-                                    <option>Curiosity</option>
-                                    <option>Spirit</option>
-                                    <option>Opportunity</option>
-                                    <option>Perseverance</option>
-                                </select>
-                            </div>
-                            <div className='selectCamera'>
-                                {options === null ? (
-                                    <></>
-                                ) : (
-                                    <>
-                                        <h3>Chose Camera :</h3>
-                                        <select onChange={changeCamera}>
-                                            {
-                                                /** This is where we have used our options variable */
-                                                options
-                                            }
-                                        </select>
-                                    </>
-                                )}
-                            </div>
-                        </div>
-
-                        <Row>{}</Row>
+                    <h2>Choose Rover to see the photos :</h2>
+                    <div className="roverSelect">
+                        <Select options={options} isClearable={isClearable} onChange={handleTypeSelect} value={options.find(function (option) {
+          return option.value === setRoverName;
+        })}/>
                     </div>
+
+                    
+                        {
+                            roverName? 
+                            <>
+                                    <h3>Recent photos taken by : <span className="orange">{roverName}</span> Rover</h3>
+
+                            </> : 
+                            <>
+                            <h3>Please Slect Rover</h3>
+                            </>
+                        }
+                    
+
+                    <Row className="recentPhotos_row">
+                        {
+                            roverData?.map((photos =>{
+                                // console.log(photos);
+                                return(
+                                    <>
+                                        <Col lg={4} key={photos.id}>
+                                            <button href="javascript:void(0);" onClick={()=>{setModalData(photos); setModalIsOpen(true);}} className="modal_link">
+                                                <span>
+                                                    <img src={photos.img_src} alt="" />
+                                                </span>
+                                            </button>
+                                        </Col>
+                                    </>
+                                )
+                            }))
+                        }
+                        {/* {loadMoreImg < roverData?.length && (
+                            <Button className='mt-4 loadMore_btn' onClick={handleMoreImage}>
+                                Load more
+                            </Button>
+                        )} */}
+                    </Row>
+                    <Modal className="RoverModal" show={modalIsOpen} onRequestClose={() => setModalIsOpen(false)} size="lg" centered>
+                        <Modal.Header >
+                        <Modal.Title>Photo Information</Modal.Title>
+                        <button type="button" class="btn-close" aria-label="Close" onClick={() => setModalIsOpen(false)}></button>
+                        </Modal.Header>
+                        <Modal.Body>
+                            <div className="modalImage">
+                                <figure><img src={modalData?.img_src} alt="" /></figure>
+                            </div>
+                            <h2><span className="orange">Photo Taken : </span>{modalData?.earth_date}</h2>
+                            <h2><span className="orange">Camera : </span>{modalData?.camera.full_name}</h2>
+                            <h2><span className="orange">Rover : </span>{modalData?.rover.name}</h2>
+                            <h2><span className="orange">Rover Status : </span>{modalData?.rover.status}</h2>
+                        </Modal.Body>
+                        
+                    </Modal>
+                    
                 </Container>
             </div>
+            
         </>
     );
 };

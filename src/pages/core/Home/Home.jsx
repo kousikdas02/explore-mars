@@ -26,11 +26,12 @@ const Home = () => {
       };
 
     
+    const BaseUrl = "https://mars-photos.herokuapp.com/api/v1/rovers";
+    
     const [roverData, setRoverData] = useState([])
 
     const getEachRoverData = async(e) =>{
         try {
-            const BaseUrl = "https://mars-photos.herokuapp.com/api/v1/rovers";
             const response = await axios.get(`${BaseUrl}/${roverName}/latest_photos`)
             setRoverData(response?.data.latest_photos)
         } catch (error) {
